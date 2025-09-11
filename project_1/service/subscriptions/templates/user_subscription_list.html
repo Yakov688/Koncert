@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %} Subscriptions {% endblock %}
+
+{% block content %}
+{% for subscription in subscriptions %}
+    <h2> {{ forloop.counter }}.
+        <a href="{% url 'subscription_details' subscription.id %}">
+             Owner {{ subscription.user.username }}
+        </a>
+    </h2>
+
+    <h3> Tariff - {{ subscription.tariff.name}} </h3>
+{% endfor %}
+{% endblock %}
