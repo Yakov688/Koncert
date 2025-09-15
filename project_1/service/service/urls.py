@@ -16,38 +16,21 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from django.contrib.auth import views as auth_views
-
 
 from rest_framework import routers
-
-from subscriptions.views import (
-    TariffListView,
-    UserSubscriptionCreateView,
-    UserSubscriptionListView,
-    UserSubscriptionDetailView,
-    UserSubscriptionUpdateView,
-    UserSubscriptionDeleteView,
-)
-
 from products.views import OrderViewSet
+from subscriptions.views import UserSubscriptionViewSet, TariffViewSet
+
 
 router = routers.DefaultRouter()
 router.register(r'order', OrderViewSet)
+router.register(r'subscription', UserSubscriptionViewSet)
+router.register(r'tariff', TariffViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    path('tariffs/', TariffListView.as_view(), name='tariffs'),
-
-    path('new_subscription/', UserSubscriptionCreateView.as_view()),
-    path('subscription_details/<int:pk>/', UserSubscriptionDetailView.as_view(), name='subscription_details'),
-    path('subscriptions/', UserSubscriptionListView.as_view(), name='subscriptions_list'),
-    path('subscription/<int:pk>/update/', UserSubscriptionUpdateView.as_view(), name='update_subscription'),
-    path('subscription/<int:pk>/delete/', UserSubscriptionDeleteView.as_view(), name='delete_subscription'),
-
     path('api/', include(router.urls)),
 
-    path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('api/auth/', include('rest_framework.urls')),
 ]

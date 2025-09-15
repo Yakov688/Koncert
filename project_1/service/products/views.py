@@ -12,10 +12,8 @@ logger = logging.getLogger(__name__)
 
 
 class OrderViewSet(viewsets.ModelViewSet):
-    queryset = Order.objects.all().prefetch_related(
-        Prefetch('products', queryset=Product.objects.only('name')),
-        Prefetch('customer', queryset=CustomUser.objects.only('username', 'telegram_id'))
-    )
+    queryset = Order.objects.select_related("customer").prefetch_related(
+        Prefetch('products', queryset=Product.objects.only('name'))).only('customer__username', 'customer__telegram_id')
     serializer_class = OrderSerializer
 
     def create(self, request, *args, **kwargs):
@@ -40,5 +38,5 @@ class OrderViewSet(viewsets.ModelViewSet):
             success = send_notification(order.customer.telegram_id, message)
             return success
         else:
-            print("❌ Нет telegram_id для отправки уведомления")
+            print("Нет telegram_id для отправки уведомления")
             return False

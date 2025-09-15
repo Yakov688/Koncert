@@ -1,7 +1,7 @@
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import JsonResponse
+from django.shortcuts import redirect
 from django.utils.deprecation import MiddlewareMixin
 from subscriptions.models import UserSubscription
-from django.urls import reverse
 
 
 class IsActiveMiddleware(MiddlewareMixin):
@@ -14,5 +14,6 @@ class IsActiveMiddleware(MiddlewareMixin):
                 if not current_user.is_active:
                     return JsonResponse({'error': 'Your subscription is inactive.'}, status=403)
             else:
-                return HttpResponseRedirect(reverse('login'))
+                login_url = f'/api/auth/login/?next={request.path}'
+                return redirect(login_url)
         return None
